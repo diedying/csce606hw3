@@ -11,6 +11,30 @@ class MoviesController < ApplicationController
   end
 
   def index
+    if params[:ratings] && (!session[:ratings] || params[:ratings] != session[:ratings])
+      session[:ratings] = params[:ratings]
+    end
+    if params[:sort] && (!session[:sort] || params[:sort] != session[:sort])
+      session[:sort] = params[:sort]
+    end
+
+   
+    redirect_check = false
+    if session[:ratings] && !params[:ratings]
+      params[:ratings] = session[:ratings]
+      redirect_check = true
+    end
+     if session[:sort] && !params[:sort]
+      params[:sort] = session[:sort]
+      redirect_check = true
+    end
+
+    
+    if redirect_check
+      flash.keep
+      redirect_to movies_path(params)
+    end
+    
     @all_ratings = Movie.all_ratings
     current_rating_selection = @all_ratings
 
